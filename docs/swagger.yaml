@@ -1,0 +1,214 @@
+basePath: /
+definitions:
+  routes.req:
+    description: Request body for creating or updating a subscription
+    properties:
+      exp_date:
+        type: string
+      price:
+        type: integer
+      start_date:
+        type: string
+      subscription_service:
+        type: string
+      user_id:
+        type: string
+    type: object
+host: localhost:8080 (default)
+info:
+  contact: {}
+  description: API для управления подписками
+  title: Subscription Service API
+  version: "1.0"
+paths:
+  /subscriptions/CreateSub:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new subscription with the provided details including
+        service name, price, start date, and optional expiration date.
+      parameters:
+      - description: New subscription details
+        in: body
+        name: subscription
+        required: true
+        schema:
+          $ref: '#/definitions/routes.req'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created subscription
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request body or parameters
+          schema:
+            type: string
+        "500":
+          description: Failed to create subscription
+          schema:
+            type: string
+      summary: Create a new subscription
+      tags:
+      - subscriptions
+  /subscriptions/DeleteSub/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a subscription for a specific user by subscription ID.
+      parameters:
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Deleted subscription
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid subscription ID
+          schema:
+            type: string
+        "404":
+          description: Subscription not found
+          schema:
+            type: string
+        "500":
+          description: Error deleting subscription
+          schema:
+            type: string
+      summary: Delete a subscription by ID
+      tags:
+      - subscriptions
+  /subscriptions/GetSub/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a subscription based on the provided subscription ID.
+      parameters:
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Subscription details
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid subscription ID
+          schema:
+            type: string
+        "404":
+          description: Subscription not found
+          schema:
+            type: string
+        "500":
+          description: Error retrieving subscription
+          schema:
+            type: string
+      summary: Get subscription by ID
+      tags:
+      - subscriptions
+  /subscriptions/UpdateSub/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Updates the subscription details (service, price, start date, end
+        date) for a specific subscription by ID.
+      parameters:
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Subscription details to update
+        in: body
+        name: subscription
+        required: true
+        schema:
+          $ref: '#/definitions/routes.req'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated subscription
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request body or parameters
+          schema:
+            type: string
+        "404":
+          description: Subscription not found
+          schema:
+            type: string
+        "500":
+          description: Error updating subscription
+          schema:
+            type: string
+      summary: Update an existing subscription by ID
+      tags:
+      - subscriptions
+  /subscriptions/total-cost/{user_id}/{subscription_service}/{start_date_from}/{start_date_to}:
+    get:
+      consumes:
+      - application/json
+      description: Get the sum of all subscriptions costs for a user, with optional
+        filtering by subscription service and date range.
+      parameters:
+      - description: User ID (UUID)
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Subscription Service Name
+        in: path
+        name: subscription_service
+        type: string
+      - description: Start Date (MM-YYYY)
+        in: path
+        name: start_date_from
+        type: string
+      - description: End Date (MM-YYYY)
+        in: path
+        name: start_date_to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Total cost of subscriptions
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid parameter
+          schema:
+            type: string
+        "404":
+          description: Subscriptions not found
+          schema:
+            type: string
+        "500":
+          description: Error calculating total subscription cost
+          schema:
+            type: string
+      summary: Get the total cost of subscriptions for a specific user
+      tags:
+      - subscriptions
+schemes:
+- http
+swagger: "2.0"
